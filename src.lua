@@ -69,9 +69,7 @@ local Library = {
 	Tertiary = Color3.fromRGB(0, 130, 130), 
 
 	StrongText = Color3.fromRGB(10, 10, 40), 
-	WeakText = Color3.fromRGB(20, 20, 80),
-	Border = Color3.fromRGB(0, 200, 200), 
-	Accent = Color3.fromRGB(0, 220, 255)
+	WeakText = Color3.fromRGB(20, 20, 80)
 			}
 		},
 		Vaporwave = {},
