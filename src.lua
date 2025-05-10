@@ -64,12 +64,16 @@ local Library = {
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
 		Aqua = {
-			Main = Color3.fromRGB(0, 255, 255),
-         Secondary = Color3.fromRGB(0, 200, 200),
-         Tertiary = Color3.fromRGB(0, 150, 150),
+			Aqua = {
+	Main = Color3.fromRGB(0, 255, 255), 
+	Secondary = Color3.fromRGB(0, 170, 170), 
+	Tertiary = Color3.fromRGB(0, 130, 130), 
 
-         StrongText = Color3.fromHSV(0.5, 1, 1),
-         WeakText = Color3.fromHSV(0.5, 0.5, 0.7)
+	StrongText = Color3.fromRGB(10, 10, 40), 
+	WeakText = Color3.fromRGB(20, 20, 80),
+	Border = Color3.fromRGB(0, 200, 200), 
+	Accent = Color3.fromRGB(0, 220, 255)
+			}
 		},
 		Vaporwave = {},
 		OperaGX = {},
