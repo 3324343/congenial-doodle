@@ -65,7 +65,7 @@ local Library = {
 		},
 		Aqua = {
 			Main = Color3.fromRGB(100, 149, 237),
-                        Secondary = Color3.fromRGB(0, 200, 200),
+                        Secondary = Color3.fromRGB(50, 50, 55),
                         Tertiary = Color3.fromRGB(0, 150, 150),
 
                         StrongText = Color3.fromHSV(0, 0, 1),
