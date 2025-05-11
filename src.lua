@@ -64,7 +64,7 @@ local Library = {
 			WeakText = Color3.fromHSV(0, 0, 172/255)
 		},
 		Aqua = {
-			Main = Color3.fromRGB(0, 255, 255),
+			Main = Color3.fromRGB(100, 149, 237),
                         Secondary = Color3.fromRGB(0, 200, 200),
                         Tertiary = Color3.fromRGB(0, 150, 150),
 
