@@ -112,7 +112,7 @@ local function Handle(sender, message)
     -- TELEPORT
     -- Format:  tp <nama>
     -----------------------------
-    if msg:sub(1,3) == ".tp" then
+    if msg:sub(1,3) == ".tp " then
         local target = msg:sub(4)
         TeleportToPlayer(target)
         return
