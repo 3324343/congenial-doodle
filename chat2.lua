@@ -15,7 +15,7 @@ _G.GeminiBusy = false
 
 if not _G.GeminiKey then
     writefile(FILE, "ISI_API_KEY_DISINI")
-    warn("[Gemini] File APIKey_Executor_Mode.gem dibuat. ISI API KEY DULU!")
+    warn("[Gemini] File APIKey.gem dibuat. ISI API KEY DULU!")
 end
 
 --====================================================--
