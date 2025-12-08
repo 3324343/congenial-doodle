@@ -1,179 +1,197 @@
---========================================================--
---   FE Chat Bot Controller (Exploit) + Auto Walk + AI    --
---========================================================--
+--====================================================--
+--                 CONFIG (EDIT DI SINI)              --
+--====================================================--
 
+local PREFIX = "!"                 -- << Ubah prefix di sini
+local MODEL_ID = "gemini-2.5-flash"
+local FILE = "APIKey.gem"
+
+--====================================================--
+--                    STORAGE                         --
+--====================================================--
+
+_G.GeminiKey = isfile(FILE) and readfile(FILE) or nil
+_G.GeminiBusy = false
+
+if not _G.GeminiKey then
+    writefile(FILE, "ISI_API_KEY_DISINI")
+    warn("[Gemini] File APIKey_Executor_Mode.gem dibuat. ISI API KEY DULU!")
+end
+
+--====================================================--
+--                SERVICES + FUNCTIONS               --
+--====================================================--
+
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LP = Players.LocalPlayer
 
---========================================================--
--- SETTINGS
---========================================================--
-local Settings = {
-    Prefix = "!",             -- <==== ganti prefix disini
-    Ping = true,
-    AutoRespond = true,
-    AutoWalk = true,
-    API_Key = "YOUR_API_KEY_HERE"
-}
+local requestFunc =
+    request or http_request or syn and syn.request or
+    fluxus and fluxus.request or function() return nil end
 
---========================================================--
--- CHAT SENDER
---========================================================--
-local function sendChat(msg)
-    game:GetService("ReplicatedStorage")
-        .DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+local function SendChat(msg)
+    local chatEvent = game.ReplicatedStorage.DefaultChatSystemChatEvents
+    chatEvent.SayMessageRequest:FireServer(msg, "All")
 end
 
---========================================================--
--- GEMINI API REQUEST
---========================================================--
-local function sendToGemini(prompt)
-    local url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" .. Settings.API_Key
-    
-    local data = {
+--====================================================--
+--                GEMINI API REQUEST                 --
+--====================================================--
+
+local function AskAI(prompt)
+    if not _G.GeminiKey then
+        return "No API Key in file: " .. FILE
+    end
+
+    if _G.GeminiBusy then
+        return "Thinking..."
+    end
+
+    _G.GeminiBusy = true
+
+    local body = {
         contents = {{
-            parts = {{
-                text = prompt
-            }}
+            parts = {{ text = prompt }}
         }}
     }
 
-    local response = request({
-        Url = url,
+    local res = requestFunc({
+        Url = "https://generativelanguage.googleapis.com/v1beta/models/"..MODEL_ID..":generateContent?key=".._G.GeminiKey,
         Method = "POST",
-        Headers = {
-            ["Content-Type"] = "application/json"
-        },
-        Body = game:GetService("HttpService"):JSONEncode(data)
+        Headers = {["Content-Type"] = "application/json"},
+        Body = HttpService:JSONEncode(body)
     })
 
-    if response and response.Body then
-        local json = game:GetService("HttpService"):JSONDecode(response.Body)
-        if json and json.candidates and json.candidates[1] then
-            return json.candidates[1].content.parts[1].text
-        end
+    _G.GeminiBusy = false
+
+    if not res or not res.Body then
+        return "API Error."
     end
 
-    return nil
+    local decoded = HttpService:JSONDecode(res.Body)
+    return decoded.candidates and decoded.candidates[1].content.parts[1].text or "No Response"
 end
 
---========================================================--
--- AUTO RESPONSE AI
---========================================================--
-local function processAutoResponse(player, message)
-    if not Settings.AutoRespond then return end
-    if player == LP then return end
+--====================================================--
+--                    TELEPORT                       --
+--====================================================--
 
-    local prompt = "Player said: "..player.Name.." : "..message.."\nGive a short natural response."
+local function TeleportToPlayer(p)
+    if not p.Character or not LP.Character then return end
+
+    local t = p.Character:FindFirstChild("HumanoidRootPart")
+    local me = LP.Character:FindFirstChild("HumanoidRootPart")
+
+    if t and me then
+        me.CFrame = t.CFrame + Vector3.new(0, 3, 0)
+    end
+end
+
+--====================================================--
+--                AUTO WALK TO PLAYER                --
+--====================================================--
+
+local walking = false
+
+local function FindPlayer(name)
+    name = name:lower()
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.Name:lower():sub(1, #name) == name then
+            return plr
+        end
+    end
+end
+
+local function AutoWalk(name)
+    local target = FindPlayer(name)
+    if not target then SendChat("Player tidak ditemukan.") return end
+
+    walking = true
+    SendChat("Walking to "..target.Name.."...")
 
     task.spawn(function()
-        local ai = sendToGemini(prompt)
-        if ai then
-            sendChat(ai)
+        while walking and target.Character and LP.Character do
+            local tHRP = target.Character:FindFirstChild("HumanoidRootPart")
+            local mHRP = LP.Character:FindFirstChild("HumanoidRootPart")
+
+            if tHRP and mHRP then
+                mHRP.CFrame = mHRP.CFrame:Lerp(tHRP.CFrame, 0.08)
+            end
+
+            RunService.Heartbeat:Wait()
         end
     end)
 end
 
---========================================================--
--- PING COMMAND
---========================================================--
-local function handlePing(player, message)
-    if message:lower() == Settings.Prefix.."ping" then
-        local ms = math.random(40, 120)
-        sendChat("Pong! ("..ms.."ms)")
-    end
+local function StopWalk()
+    walking = false
+    SendChat("Stopped walking.")
 end
 
---========================================================--
--- FIND PLAYER
---========================================================--
-local function findPlayer(name)
-    name = name:lower()
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p.Name:lower():sub(1, #name) == name then
-            return p
+--====================================================--
+--                  CHAT COMMANDS                    --
+--====================================================--
+
+local function OnMessage(player, message)
+    if player == LP then return end
+    local msg = message:lower()
+
+    -- prefix basic
+    if msg:sub(1, #PREFIX) == PREFIX then
+        local args = message:split(" ")
+        local cmd = args[1]:sub(#PREFIX+1):lower()
+
+        if cmd == "ping" then
+            SendChat("Pong! "..math.random(40,120).."ms")
+
+        elseif cmd == "tp" and args[2] then
+            local to = FindPlayer(args[2])
+            if to then
+                TeleportToPlayer(to)
+                SendChat("Teleported to "..to.Name)
+            else
+                SendChat("Player tidak ditemukan.")
+            end
+
+        elseif cmd == "walk" and args[2] then
+            AutoWalk(args[2])
+
+        elseif cmd == "stopwalk" then
+            StopWalk()
+
+        elseif cmd == "ai" then
+            local q = message:sub(#PREFIX + 4)
+            local ans = AskAI(q)
+            if ans then SendChat(ans) end
         end
-    end
-end
 
---========================================================--
--- AUTO WALK TO PLAYER (SMOOTH)
---========================================================--
-local walking = false
-
-local function autoWalkToPlayer(name)
-    local target = findPlayer(name)
-    if not target or not target.Character then
-        sendChat("Player not found.")
         return
     end
 
-    walking = true
-
-    sendChat("Walking to "..target.Name.."...")
-
-    while walking and target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") do
-        local char = LP.Character
-        if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
-            local hrp = char.HumanoidRootPart
-            local targetPos = target.Character.HumanoidRootPart.Position
-
-            -- smooth move
-            hrp.CFrame = hrp.CFrame:Lerp(CFrame.new(targetPos), 0.1)
-        end
-
-        RunService.Heartbeat:Wait()
+    -- Auto AI when someone mention you
+    if msg:find(LP.Name:lower()) then
+        local ans = AskAI(message)
+        if ans then SendChat(ans) end
     end
 end
 
-local function stopWalk()
-    walking = false
-end
+--====================================================--
+--                CONNECT LISTENERS                  --
+--====================================================--
 
---========================================================--
--- COMMAND HANDLER
---========================================================--
-local function handleCommand(player, message)
-    if not message:lower():sub(1, #Settings.Prefix) == Settings.Prefix then return end
-
-    local args = message:split(" ")
-    local cmd = args[1]:sub(#Settings.Prefix + 1):lower()
-
-    if cmd == "ping" then
-        handlePing(player, message)
-
-    elseif cmd == "walkto" and args[2] then
-        autoWalkToPlayer(args[2])
-
-    elseif cmd == "stopwalk" then
-        stopWalk()
-        sendChat("Stopped walking.")
-
-    end
-end
-
---========================================================--
--- MESSAGE LISTENER
---========================================================--
-local function onMessage(player, message)
-    handleCommand(player, message)   -- commands (prefix)
-    processAutoResponse(player, message) -- AI auto chat
-end
-
---========================================================--
--- HOOK CHAT EVENT
---========================================================--
 for _, p in ipairs(Players:GetPlayers()) do
     p.Chatted:Connect(function(msg)
-        onMessage(p, msg)
+        OnMessage(p, msg)
     end)
 end
 
 Players.PlayerAdded:Connect(function(p)
     p.Chatted:Connect(function(msg)
-        onMessage(p, msg)
+        OnMessage(p, msg)
     end)
 end)
 
-print("Chat Bot Loaded | Prefix:", Settings.Prefix)
+print("[Gemini] Loaded with prefix: "..PREFIX)
+print("[Gemini] Using API Key File: "..FILE)
