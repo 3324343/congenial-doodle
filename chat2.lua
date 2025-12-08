@@ -12,7 +12,7 @@ local RunService = game:GetService("RunService")
 ----------------------------------------------------------------
 -- CONFIG
 ----------------------------------------------------------------
-local PREFIX = "!"
+local PREFIX = "."
 local MODEL_ID = "gemini-2.5-flash"
 local FILE = "APIKey_Executor_Mode.gem"
 
@@ -98,6 +98,139 @@ end
 ----------------------------------------------------------------
 RunService.RenderStepped:Connect(function()
 	if _G.AutoWalkTarget then
+		local lp = Players.LocalPlayer
+		local target = FindPlayer(_G.AutoWalkTarget)
+		if target and target.Character and lp.Character then
+			local myHRP = lp.Character:FindFirstChild("HumanoidRootPart")
+			local theirHRP = target.Character:FindFirstChild("HumanoidRootPart")
+			local hum = lp.Character:FindFirstChildOfClass("Humanoid")
+
+			if myHRP and theirHRP and hum then
+				hum:MoveTo(theirHRP.Position)
+			end
+		end
+	end
+end)
+
+----------------------------------------------------------------
+-- PLAYER INFO (AGE, USERNAME, DISPLAY)
+----------------------------------------------------------------
+local function GetPlayerInfo(name)
+	local p = FindPlayer(name)
+	if not p then return "❌ Player not found: "..name end
+
+	return string.format(
+		"🧍 **Player Info: %s**\n"..
+		"👤 Username: %s\n"..
+		"🏷 Display Name: %s\n"..
+		"📅 Account Age: %s days",
+		p.Name,
+		p.Name,
+		p.DisplayName,
+		p.AccountAge
+	)
+end
+
+----------------------------------------------------------------
+-- WEATHER
+----------------------------------------------------------------
+local function GetWeather(city)
+	local geo = request({Url = "https://geocoding-api.open-meteo.com/v1/search?name="..city, Method="GET"})
+	if not geo or not geo.Body then return "❌ Failed to get location" end
+
+	local decoded = HttpService:JSONDecode(geo.Body)
+	if not decoded.results or #decoded.results == 0 then return "❌ City not found" end
+
+	local lat = decoded.results[1].latitude
+	local lon = decoded.results[1].longitude
+
+	local weather = request({
+		Url = string.format(
+			"https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s&current_weather=true",
+			lat, lon
+		),
+		Method="GET"
+	})
+
+	local w = weather.Body and HttpService:JSONDecode(weather.Body).current_weather
+	if not w then return "❌ Weather unavailable." end
+
+	return string.format(
+		"🌦 Weather in %s\n🌡 %s°C\n💨 %s km/h\n⛅ Code: %s",
+		city, w.temperature, w.windspeed, w.weathercode
+	)
+end
+
+----------------------------------------------------------------
+-- HANDLE CHAT
+----------------------------------------------------------------
+local function Handle(sender, message)
+	local lower = message:lower()
+
+	-- PREFIX COMMANDS
+	if lower:sub(1,#PREFIX) == PREFIX then
+		local cmd = lower:sub(#PREFIX + 1)
+
+		if cmd == "ping" then SendChat("🏓 Pong! " .. math.random(40,80).. "ms") return end
+		if cmd:sub(1,3) == "tp " then TeleportToPlayer(cmd:sub(4)) return end
+		if cmd:sub(1,3) == "ai " then SendChat(AskAI(message:sub(#PREFIX + 5))) return end
+
+		if cmd:sub(1,5) == "info " then
+			SendChat(GetPlayerInfo(cmd:sub(6)))
+			return
+		end
+
+		if cmd:sub(1,5) == "walk " then
+			_G.AutoWalkTarget = cmd:sub(6)
+			SendChat("🚶 Auto-walking to: **"..cmd:sub(6).."**")
+			return
+		end
+
+		if cmd == "walkoff" then
+			_G.AutoWalkTarget = nil
+			SendChat("🛑 Auto-walk stopped.")
+			return
+		end
+
+		if cmd:sub(1,8) == "weather " then
+			SendChat(GetWeather(cmd:sub(9)))
+			return
+		end
+	end
+
+	-- Auto AI jika dipanggil nama
+	if lower:find(Players.LocalPlayer.Name:lower()) then
+		SendChat(AskAI(message))
+	end
+end
+
+----------------------------------------------------------------
+-- CHAT LISTENER
+----------------------------------------------------------------
+if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+	TextChatService.MessageReceived:Connect(function(packet)
+		local plr = Players:GetPlayerByUserId(packet.TextSource.UserId)
+		if plr then Handle(plr, packet.Text) end
+	end)
+else
+	Players.PlayerChatted:Connect(function(plr, msg)
+		Handle(plr, msg)
+	end)
+end
+
+----------------------------------------------------------------
+-- UI
+----------------------------------------------------------------
+local ui = Instance.new("ScreenGui", CoreGui)
+local box = Instance.new("TextLabel", ui)
+box.Size = UDim2.new(0, 260, 0, 40)
+box.Position = UDim2.new(0, 10, 0.5, -20)
+box.BackgroundColor3 = Color3.fromRGB(20,20,20)
+box.TextColor3 = Color3.new(1,1,1)
+box.Font = Enum.Font.GothamBold
+box.TextSize = 14
+box.Text = "UNXHub Gemini Loaded (".. PREFIX ..")"
+Instance.new("UICorner", box).CornerRadius = UDim.new(0,10)	if _G.AutoWalkTarget then
 		local lp = Players.LocalPlayer
 		local target = FindPlayer(_G.AutoWalkTarget)
 		if target and target.Character and lp.Character then
