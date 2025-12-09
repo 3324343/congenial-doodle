@@ -104,7 +104,7 @@ local function TeleportToPlayer(name)
 
         if hrp and thr then
                 hrp.CFrame=thr.CFrame+Vector3.new(0,3,0)
-                SendChat("[+] Teleported to player: "..t.Name)
+                SendChat("[+] Teleport to player: "..t.Name)
         end
 end
 
