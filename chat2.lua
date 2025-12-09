@@ -7,7 +7,7 @@ local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local CoreGui=game:GetService("CoreGui")
 local RunService=game:GetService("RunService")
 
-local PREFIX="!"
+local PREFIX="."
 local MODEL_ID="gemini-2.5-flash"
 local FILE="APIKey_Executor_Mode.gem"
 
@@ -104,7 +104,7 @@ local function TeleportToPlayer(name)
 
         if hrp and thr then
                 hrp.CFrame=thr.CFrame+Vector3.new(0,3,0)
-                SendChat("Teleported to "..t.Name)
+                SendChat("[+] Teleported to player: "..t.Name)
         end
 end
 
