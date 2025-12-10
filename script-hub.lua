@@ -1,4 +1,4 @@
-E3repeat task.wait() until game:IsLoaded()
+repeat task.wait() until game:IsLoaded()
 
 -- CONFIG
 getgenv().Image = "rbxassetid://7229442422"
@@ -59,14 +59,6 @@ Window = Fluent:CreateWindow({
     MinimizeKey = Enum.KeyCode[getgenv().ToggleUIKey]
 })
 
-Tabs.Main:AddButton({
-    Title = "Infinite Yield",
-    Description = "FE Admin commands",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-    end
-})
-
 --====================================================
 -- KEYBOARD TOGGLE
 --====================================================
@@ -91,10 +83,10 @@ local Tabs = {
 }
 
 Tabs.Main:AddButton({
-    Title = "Test Button",
-    Description = "contoh",
+    Title = "Infinite Yield",
+    Description = "FE Admin commands",
     Callback = function()
-        Fluent:Notify({ Title = "OK", Content = "Button pressed", Duration = 3 })
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
     end
 })
 
