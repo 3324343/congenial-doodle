@@ -1,4 +1,4 @@
-repeat task.wait() until game:IsLoaded()
+E3repeat task.wait() until game:IsLoaded()
 
 -- CONFIG
 getgenv().Image = "rbxassetid://7229442422"
