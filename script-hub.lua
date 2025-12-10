@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
 -- CONFIG
-getgenv().Image = "rbxassetid://8421015384"
+getgenv().Image = "rbxassetid://132512738251618"
 getgenv().ToggleUIKey = "E"
 
 local Window
@@ -50,7 +50,7 @@ local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/d
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 Window = Fluent:CreateWindow({
-    Title = "Script hub " .. Fluent.Version,
+    Title = "Fish It Script hub " .. Fluent.Version,
     SubTitle = "by Dawid",
     Size = UDim2.fromOffset(580, 460), -- ❗ TIDAK FULLSCREEN
     TabWidth = 160,
