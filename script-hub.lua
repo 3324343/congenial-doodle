@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
 -- CONFIG
-getgenv().Image = "rbxassetid://7229442422"
+getgenv().Image = "rbxassetid://8421015384"
 getgenv().ToggleUIKey = "E"
 
 local Window
