@@ -50,7 +50,7 @@ local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/d
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 Window = Fluent:CreateWindow({
-    Title = "Fluent " .. Fluent.Version,
+    Title = "Script hub " .. Fluent.Version,
     SubTitle = "by Dawid",
     Size = UDim2.fromOffset(580, 460), -- ❗ TIDAK FULLSCREEN
     TabWidth = 160,
@@ -89,6 +89,15 @@ Tabs.Main:AddButton({
       loadstring(game:HttpGet("https://raw.githubusercontent.com/MajestySkie/Chloe-X/main/Main/ChloeX"))()
     end
 })
+
+Tabs.Main:AddButton({
+    Title = "Vinz-hub",
+    Description = "Free script",
+    Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/Vinzyy13/VinzHub/refs/heads/main/Fish-It"))()
+    end
+})
+
 
 --====================================================
 -- SAVE + INTERFACE
