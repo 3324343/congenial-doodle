@@ -78,7 +78,7 @@ end)
 -- TABS + BUTTON
 --====================================================
 local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "home" }),
+    Main = Window:AddTab({ Title = "Main", Icon = "fish" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
