@@ -83,10 +83,10 @@ local Tabs = {
 }
 
 Tabs.Main:AddButton({
-    Title = "Infinite Yield",
-    Description = "FE Admin commands",
+    Title = "Chloe-X",
+    Description = "Free script",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/MajestySkie/Chloe-X/main/Main/ChloeX"))()
     end
 })
 
