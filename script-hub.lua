@@ -98,6 +98,45 @@ Tabs.Main:AddButton({
     end
 })
 
+Tabs.Main:AddButton({
+    Title = "Vikai Hub",
+    Description = "Free script",
+    Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/vinxonez/ViKai-HUB/refs/heads/main/loader"))()
+    end
+})
+
+Tabs.Main:AddButton({
+    Title = "Script",
+    Description = "Free script",
+    Callback = function()
+      
+    end
+})
+
+Tabs.Main:AddButton({
+    Title = "Script",
+    Description = "Free script",
+    Callback = function()
+      
+    end
+})
+
+Tabs.Main:AddButton({
+    Title = "Script",
+    Description = "Free script",
+    Callback = function()
+      
+    end
+})
+
+Tabs.Main:AddButton({
+    Title = "Script",
+    Description = "Free script",
+    Callback = function()
+      
+    end
+})
 
 --====================================================
 -- SAVE + INTERFACE
