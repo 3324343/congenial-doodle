@@ -59,6 +59,14 @@ Window = Fluent:CreateWindow({
     MinimizeKey = Enum.KeyCode[getgenv().ToggleUIKey]
 })
 
+Tabs.Main:AddButton({
+    Title = "Infinite Yield",
+    Description = "FE Admin commands",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end
+})
+
 --====================================================
 -- KEYBOARD TOGGLE
 --====================================================
