@@ -107,10 +107,10 @@ Tabs.Main:AddButton({
 })
 
 Tabs.Main:AddButton({
-    Title = "Script",
+    Title = "717exe",
     Description = "Free script",
     Callback = function()
-      
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/arcadeisreal/717exe---Fish-It/refs/heads/main/loader.lua"))()
     end
 })
 
