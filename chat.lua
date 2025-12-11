@@ -87,7 +87,7 @@ local function GetPlayerInfo(name)
 		"Username: "..p.Name.."\n"..
 		"DisplayName: "..p.DisplayName.."\n"..
 		"Account Age: "..p.AccountAge.." days"
-	    "Account ID:  "..p.UserId"
+	    "Account ID:  "..p.UserId"\n"
 end
 
 local function GetWeather(city)
@@ -138,14 +138,3 @@ else
 		Handle(plr,msg)
 	end)
 end
-
-local ui=Instance.new("ScreenGui",CoreGui)
-local box=Instance.new("TextLabel",ui)
-box.Size=UDim2.new(0,260,0,40)
-box.Position=UDim2.new(0,10,0.5,-20)
-box.BackgroundColor3=Color3.fromRGB(20,20,20)
-box.TextColor3=Color3.new(1,1,1)
-box.Font=Enum.Font.GothamBold
-box.TextSize=14
-box.Text="UNXHub Gemini ("..PREFIX..")"
-Instance.new("UICorner",box).CornerRadius=UDim.new(0,10)
