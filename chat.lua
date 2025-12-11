@@ -87,7 +87,7 @@ local function GetPlayerInfo(name)
 		"Username: "..p.Name.."\n"..
 		"DisplayName: "..p.DisplayName.."\n"..
 		"Account Age: "..p.AccountAge.." days"
-	    "Account ID:  "..p.AccountID"
+	    "Account ID:  "..p.UserId"
 end
 
 local function GetWeather(city)
